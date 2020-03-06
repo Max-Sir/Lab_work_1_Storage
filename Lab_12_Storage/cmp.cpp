@@ -51,7 +51,7 @@ int vehicle_type_cmp(Storage a, Storage b) {
 }
 
 int vehicle_ammo_type_cmp(Storage a, Storage b) {
-    return (int)(a.vehicle.ammo_type - b.vehicle.ammo_type);
+    return (int)(a.vehicle.Ammo_type - b.vehicle.Ammo_type);
 }
 
 int vehicle_access_time_cmp(Storage a, Storage b) {
@@ -63,7 +63,7 @@ int vehicle_data_rate_cmp(Storage a, Storage b) {
 }
 
 int usb_standart_cmp(Storage a, Storage b) {
-    float c = a.ammo.usb_standart - b.ammo.usb_standart;
+    auto c = a.ammo.usb_standart - b.ammo.usb_standart;
     return (c == 0) ? 0 : (c > 0) ? 1 : -1;
 }
 

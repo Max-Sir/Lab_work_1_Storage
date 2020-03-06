@@ -8,42 +8,65 @@ typedef enum
 
 typedef enum {
 	banana = 1, apple, orange, lemon
-}fruit_type;
+}Fruit_type;
 typedef enum {
 	Potato = 1, Tomato
 }Vegetable_TYPE;
 typedef enum {
 	bullet = 1, grenade, mine
-}ammo_type;
+}Ammo_type;
 typedef enum {
 	bugatti = 1, Ferrari, Porshche
-}vehicle_type;
+}Vehicle_type;
 
-typedef struct
-{
-	char* model;
-	int cost;
+//typedef struct
+//{
+//	char* model;
+//	int cost;
+//
+//}Vehicle;
+//
+//typedef struct
+//{
+//	char* sort;
+//	int cost;
+//}Fruit;
+//
+//typedef struct
+//{
+//	char* type;
+//	int cost;
+//
+//}Vegetable;
+//
+//typedef struct
+//{
+//	char* type;
+//	int cost;
+//
+//}Ammo;
+typedef struct {
+	Fruit_type fruit_type;
+	float average_seek_time; // ms
+	int spindle_speed; //rpm
+} Vehicle;
 
-}Vehicle;
+typedef struct {
+	float usb_standart; // 1.0, 1.1, 2.0, 3.0, 3.1, 3.2
+	int read_speed; // Mb/s
+	int write_speed; // Mb/s
+} Fruit;
 
-typedef struct
-{
-	char* sort;
-	int cost;
-}Fruit;
-
-typedef struct
-{
-	char* type;
-	int cost;
-
+typedef struct {
+	Vegetable_TYPE type;
+	Ammo_type record_type;
+	int data_rate; // Mb/s
+	int access_time; // ms 
 }Vegetable;
 
-typedef struct
-{
-	char* type;
-	int cost;
-
+typedef struct {
+	Vehicle_type interface_ssd;
+	int input_output; // Mb/s
 }Ammo;
 
 struct Storage

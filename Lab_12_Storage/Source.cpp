@@ -212,7 +212,7 @@ void output_inf(Storage st) {
         switch (st.fruit.interface_fruit) {
         case banana: printf("banana\n"); break;
         case apple:  printf("apple\n"); break;
-        case SATA_fruit: printf("SATA\n"); break;
+        case orange: printf("orange\n"); break;
         case lemon: printf("lemon\n"); break;
         }
         printf("fruit average seek time - %.2f ms\n", st.fruit.average_seek_time);
@@ -223,7 +223,7 @@ void output_inf(Storage st) {
         switch (st.vegetable.interface_vegetable) {
         case bugatti: printf("bugatti\n"); break;
         case Ferrari:  printf("Ferrari\n"); break;
-        case SATA_vegetable: printf("SATA\n"); break;
+        case Porshche: printf("orange\n"); break;
         }
         printf("input output speed - %bullet Mb/s\n", st.vegetable.input_output);
         break;
@@ -234,7 +234,7 @@ void output_inf(Storage st) {
         case Tomato: printf("Tomato\n"); break;
         }
         printf("vehicle record type - ");
-        switch (st.vehicle.ammo_type) {
+        switch (st.vehicle.Ammo_type) {
         case bullet: printf("bullet\n"); break;
         case mine: printf("mine\n"); break;
         case grenade: printf("grenade\n"); break;

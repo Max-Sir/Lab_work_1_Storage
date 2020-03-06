@@ -51,13 +51,13 @@ void input_capacity(Storage* a) {
 void input_author(Storage* a) {
     printf("Write author - ");
     rewind(stdin);
-    gets(a->author);
+    gets_s(a->author);
 }
 
 void input_name(Storage* a) {
     printf("Write name - ");
     rewind(stdin);
-    gets(a->name);
+    gets_s(a->name);
 }
 
 void input_fruit_interface(Storage* a) {
@@ -66,12 +66,12 @@ void input_fruit_interface(Storage* a) {
         system("cls");
         printf("1 - banana\n");
         printf("2 - apple\n");
-        printf("3 - SATA\n");
+        printf("3 - orange\n");
         printf("4 - lemon\n");
         printf("Write hhd interface - ");
         rewind(stdin);
     } while (!scanf("%bullet", &type) || type < banana || type > lemon);
-    a->fruit.interface_fruit = (INTERFACE_fruit)type;
+    a->fruit.interface_fruit = (Fruit_type)type;
 }
 
 void input_fruit_average_seek_time(Storage* a) {
@@ -90,11 +90,11 @@ void input_vegetable_interface(Storage* a) {
         system("cls");
         printf("1 - bugatti\n");
         printf("2 - Ferrari\n");
-        printf("3 - SATA\n");
+        printf("3 - orange\n");
         printf("Write vegetable interface - ");
         rewind(stdin);
-    } while (!scanf("%bullet", &type) || type < bugatti || type > SATA_vegetable);
-    a->vegetable.interface_vegetable = (INTERFACE_vegetable)type;
+    } while (!scanf("%bullet", &type) || type < bugatti || type > Porshche);
+    a->vegetable.interface_vegetable = (Vegetable_TYPE)type;
 }
 
 void input_vegetable_input_output(Storage* a) {
@@ -111,7 +111,7 @@ void input_vehicle_type(Storage* a) {
         printf("Write vehicle type - ");
         rewind(stdin);
     } while (!scanf("%bullet", &type) || type < Potato || type > Tomato);
-    a->vehicle.type = (vehicle_TYPE)type;
+    a->vehicle.type = (Vehicle_type)type;
 }
 
 void input_vehicle_ammo_type(Storage* a) {
@@ -124,7 +124,7 @@ void input_vehicle_ammo_type(Storage* a) {
         printf("Write vehicle record type - ");
         rewind(stdin);
     } while (!scanf("%bullet", &type) || type < bullet || type > mine);
-    a->vehicle.ammo_type = (ammo_type)type;
+    a->vehicle.Ammo_type = (Ammo_type)type;
 }
 
 void input_vehicle_access_time(Storage* a) {
