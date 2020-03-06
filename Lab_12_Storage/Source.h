@@ -1,17 +1,14 @@
-#pragma once
-#include "Storage.h"
-
 int menu();
 int is_empty(int size);
-int fl_type_object(int choice);
+int fl_type_media(int choice);
 Storage* input_array(int* size);
 Storage* new_array();
 Storage* new_inf(Storage* array, int* size);
 void output_array(Storage* array, int size);
-void output_inf(Storage st);
+void output_inf(Storage inf);
 void edit_inf(Storage* array, int size);
-int choose_field_to_edit(Storage* st);
-void object_specification_edit(Storage* st, int choice);
+int choose_field_to_edit(Storage* inf);
+void media_specification_edit(Storage* inf, int choice);
 void find_inf(Storage* array, int size);
 int choose_find_inf(Storage* array);
 void sort_array(Storage* array, int size);
