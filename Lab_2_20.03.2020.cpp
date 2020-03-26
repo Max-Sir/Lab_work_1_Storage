@@ -1,13 +1,58 @@
-﻿
-// Lab_2_20.03.2020.cpp : This file contains the 'main' function. Program execution begins and ends there.
+﻿// Lab_2_20.03.2020.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 #include"Lab_2_20.03.2020.h"
+#include <cstdio>
+#include <cstdlib>
+#include <windows.h>
+#include "input.h"
+#include "cmp.h"
+#include "Storage.h"
 #include <iostream>
+
+
+int (*cmp_array[])(Storage, Storage) = {
+ not_full_company_cmp,
+
+ obj_type_cmp,
+
+ vehicle_model_cmp,
+ vehicle_cost_cmp,
+ vehicle_max_speed_cmp,
+ vehicle_quantity_cmp,
+
+ vegetable_type_cmp,
+ vegetable_quantity_cmp,
+ vegetable_cost_cmp,
+
+ fruit_type_cmp,
+ fruit_quantity_cmp,
+ fruit_cost_cmp,
+
+ ammo_type_cmp,
+ ammo_quantity_cmp,
+ ammo_cost_cmp,
+};
+
+void (*input_func_array[])(Storage*) = {
+
+ input_company,
+
+ input_type,
+
+ input_Vehicle_model,
+    input_vehicle_cost,input_vehicle_max_speed,input_vehicle_quantity,
+input_Vegetable_type,
+    input_vegetable_quantity,input_vegetable_cost,
+ input_Fruit_type,
+    input_fruit_quantity,input_fruit_cost,
+input_Ammo_type,
+ input_ammo_quantity, input_ammo_cost,
+};
 
 int main() {
     int size = 0;
-    Storage* array;
-    while (1) {
+    Storage* array=static_cast<Storage*>(malloc(0));
+    while (true) {
         switch (menu()) {
         case 1: array = input_array(&size); break;
         case 2: output_array(array, size); break;
@@ -15,7 +60,7 @@ int main() {
         case 4: find_inf(array, size); break;
         case 5: sort_array(array, size); break;
         case 6: delete_array(array, &size); break;
-            // case 7 : notfull_search(array, size); break;
+        case 7 : not_full_search(array, size); break;
         case -1: return 0; break;
         default: printf("Wrong choice\n"); break;
         }
@@ -24,33 +69,22 @@ int main() {
     return 0;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
-
 int menu() {
     int choice;
 
     do {
         system("CLS");
-        printf("1 - input inf array\n");
-        printf("2 - output inf array\n");
-        printf("3 - edit inf\n");
-        printf("4 - find inf\n");
-        printf("5 - sort inf\n");
-        printf("6 - delete inf\n");
-        //printf("7 - partial search\n");
+        printf("1 - input storage array\n");
+        printf("2 - output storage array\n");
+        printf("3 - edit storage\n");
+        printf("4 - find storage\n");
+        printf("5 - sort storage\n");
+        printf("6 - delete storage\n");
+        printf("7 - partial search\n");
         printf("-1 - quit\n");
         printf("choose  - ");
         rewind(stdin);
-    } while(!scanf("%d", &choice) || ((choice < 1 || choice > 6) && choice != -1));
+    } while(!scanf_s("%d", &choice) || ((choice < 1 || choice > 7) && choice != -1));
 
     return choice;
 }
@@ -61,35 +95,34 @@ int is_empty(int size) {
     if (size == 0) {
         printf("Array is empty\n");
         rewind(stdin);
-        getchar();
         return 1;
     }
     return 0;
 }
 
-int fl_type_media(int choice) {
-    int type_media;
+int fl_type_storage(int choice) {
+    int type_storage=0;
     switch (choice) {
-        case 1 : case 2 : case 3 : case 4 :
-            type_media = FL_NO_MATTER;
+        case 1 : case 2 :
+            type_storage = FL_NO_MATTER;
             break;
-        case 5 : case 6 : case 7 :
-            type_media = HDD;
+        case 3: case 4:case 5 : case 6 :
+            type_storage = Vehicle;//hdd ssd disk ammo
             break;
-        case 8 : case 9 :
-            type_media = SSD;
+        case 7:case 8 : case 9 :
+            type_storage = Vegetable;
             break;
-        case 10 : case 11 : case 12 : case 13 :
-            type_media = DISK;
+        case 10 : case 11 : case 12 :
+            type_storage = Fruit;
             break;
-         case 14 : case 15 : case 16 :
-            type_media = USB_FLASH;
+        case 13: case 14 : case 15 :
+            type_storage = Ammo;
             break;
         case -1 :
-            type_media = 0;
+            type_storage = 0;
             break;
     }
-    return type_media;
+    return type_storage;
 }
 
 //-----------INPUT------------------------------------------------------------------------------------
@@ -103,7 +136,7 @@ Storage* input_array(int* size) {
             printf("0 - stop\n");
             printf("1 - continue\n");
             rewind(stdin);
-        } while (!scanf("%d", &choice) || choice < 0 || choice > 1);
+        } while (!scanf_s("%d", &choice) || choice < 0 || choice > 1);
         if (choice == 0)
             break;
         array = new_inf(array, size);
@@ -121,28 +154,28 @@ Storage* new_array() {
 }
 
 Storage* new_inf(Storage* array, int* size) {
-    if (!(array = (Storage*)realloc(array, (*size + 1) * sizeof(Storage)))) {
+    if (!(array = static_cast<Storage*>(realloc(array, (*size + 1) * sizeof(Storage))))) {
         printf("memory reallocation error");
         exit(0);
     }
 
-    for (int i = 0; i <= 3; ++i)
+    for (int i = 0; i <= 1; ++i)
         input_func_array[i](&array[*size]);
     switch (array[*size].type) {
-        case HDD :
-            for (int i = 4; i <= 6; ++i)
+        case Vehicle :
+            for (int i = 2; i <= 5; ++i)
                 input_func_array[i](&array[*size]);
             break;
-        case SSD :
+        case Vegetable :
             for (int i = 7; i <= 8; ++i) 
                 input_func_array[i](&array[*size]);
             break;
-        case DISK :
+        case Fruit :
             for (int i = 9; i <= 12; ++i)
                 input_func_array[i](&array[*size]);   
             break;
-        case USB_FLASH :
-            for (int i = 13; i <= 15; ++i)
+        case Ammo :
+            for (int i = 13; i <= 14; ++i)
                 input_func_array[i](&array[*size]);
             break;
     }
@@ -162,7 +195,7 @@ void output_array(Storage* array, int size) {
         printf("-1 - ouput all array\n");
         printf("choice - ");
         rewind(stdin);
-    }while (!scanf("%d", &i) || i >= size || i < -1);
+    }while (!scanf_s("%d", &i) || i >= size || i < -1);
     table();
     if (i == -1) {
         
@@ -174,28 +207,28 @@ void output_array(Storage* array, int size) {
         output_inf(array, i);
     }
     rewind(stdin);
-    getchar();
+    _getch();
 } 
 
-void table() {
-    printf("5 - hdd interface\n");
-    printf("6 - hdd average seek time(ms)\n");
-    printf("7 - hdd spindle speed(rpm)\n");
-    printf("8 - ssd interface\n");
-    printf("9 - input output speed(Mb/s)\n");
-    printf("10 - disk type\n");
-    printf("11 - disk record type\n");
-    printf("12 - disk data rate(Mb/s)\n");
-    printf("13 - disk access time(ms)\n");           
-    printf("14 - usb standart\n");
-    printf("15 - usb read speed(Mb/s)\n");
-    printf("16 - usb write speed(Mb/s)\n");
+void table() {//table of output data
+    printf("4 - vehicle model\n");
+    printf("5 - vehicle cost\n");
+    printf("6 - vehicle max speed\n");
+    printf("7 - vehicle quantity\n");
+    printf("8 - vegetable type\n");
+    printf("9 - vegetable quantity\n");
+    printf("9 - vegetable cost\n");
+    printf("11 - fruit type\n");
+    printf("12 - fruit quantity\n");
+    printf("13 - fruit cost\n");           
+    printf("14 - ammo type\n");
+    printf("15 - ammo quantity\n");
+    printf("16 - ammo cost\n");
     printf("\n");
     printf("ind ");
-    printf("Name    ");
-    printf("Author    ");
-    printf("type ");
-    printf("cap\t");
+    printf("company    ");
+    printf("type\t");
+    printf("4\t");
     printf("5\t");
     printf("6\t");
     printf("7\t");
@@ -214,59 +247,64 @@ void table() {
 void output_inf(Storage* inf, int i) {
     
     printf("%d. ", i);
-    printf("%-8s ", inf[i].name);
-    printf("%-8s ", inf[i].author);
+    printf("%-8s ", inf[i].company);
     
     switch (inf[i].type) {
-        case HDD : printf("HDD "); break;
-        case SSD : printf("SSD "); break;
-        case DISK : printf("disk "); break;
-        case USB_FLASH : printf("usb "); break;
+        case Vehicle : printf("Vehicle \t"); break;
+        case Vegetable : printf("Vegetable \t"); break;
+        case Fruit : printf("Fruit \t"); break;
+        case Ammo : printf("Ammo \t"); break;
     }
-    printf("%.2f\t", inf[i].capacity);
 
     switch (inf[i].type) {
-        case DISK :
-            switch (inf[i].disk.type) {
-                case CD: printf("CD\t"); break;
-                case DVD: printf("DVD\t"); break;
+        case Fruit :
+            switch (inf[i].fruit.type) {
+            case banana: printf("banana\t"); break;
+            case apple: printf("apple\t"); break;
+            case orange: printf("orange\t"); break;
+            case peach: printf("peach\t"); break;
             }
-            switch (inf[i].disk.record_type) {
-                case R: printf("R\t"); break;
-                case RW: printf("RW\t"); break;        
-                case ROM: printf("ROM\t"); break;
-            }
-            printf("%d\t", inf[i].disk.data_rate);
-            printf("%d\t", inf[i].disk.access_time);
+           
+            printf("%d\t", inf[i].fruit.cost);
+            printf("%d\t", inf[i].fruit.quantity);
             printf("--\t--\t--\t--\t--\t--\t--\t--\t");           
             break;
-        case HDD :
+        case Vehicle :
             printf("--\t--\t--\t--\t");
-            switch (inf[i].hdd.interface_hdd) {
-                case IDE: printf("IDE\t"); break;
-                case SAS:  printf("SAS\t"); break;
-                case SATA_HDD: printf("SATA\t"); break;
-                case SCSI: printf("SCSI\t"); break;
+            switch (inf[i].vehicle.model) {
+            case ferrari: printf("ferrari\t"); break;
+            case mercedes: printf("mercedes\t"); break;
+            case tesla: printf("tesla\t"); break;
+            case audi: printf("audi\t"); break;
             }
-            printf("%.2f\t", inf[i].hdd.average_seek_time);
-            printf("%d\t", inf[i].hdd.spindle_speed);
+            printf("%d\t", inf[i].vehicle.quantity);
+            printf("%d\t", inf[i].vehicle.cost);
+            printf("%d\t", inf[i].vehicle.max_speed);
             printf("--\t--\t--\t--\t--\t");
             break;
-        case SSD :
+        case Vegetable :
             printf("--\t--\t--\t--\t--\t--\t--\t");
-            switch (inf[i].ssd.interface_ssd) {
-                case M_2: printf("M_2\t"); break;
-                case PCIE:  printf("PCIE\t"); break;
-                case SATA_SSD : printf("SATA\t"); break;
+            switch (inf[i].vegetable.type) {
+            case potato: printf("potato\t"); break;
+            case tomato: printf("tomato\t"); break;
+            case carrot: printf("carrot\t"); break;
+            case corn: printf("corn\t"); break;
             }
-            printf("%d\t", inf[i].ssd.input_output);
+            printf("%d\t", inf[i].vegetable.cost);
+            printf("%d\t", inf[i].vegetable.quantity);
             printf("--\t--\t--\t");
             break;
-        case USB_FLASH :
+        case Ammo :
+    	switch (inf[i].ammo.type)
+    	{
+        case bullet: printf("bullet\t"); break;
+        case grenade: printf("grenade\t"); break;
+        case mine: printf("mine\t"); break;
+        case bomb: printf("bomb\t"); break;
+    	}
             printf("--\t--\t--\t--\t--\t--\t--\t--\t--\t");
-            printf("%.1f\t", inf[i].usb_flash.usb_standart);
-            printf("%d\t", inf[i].usb_flash.read_speed);
-            printf("%d\t", inf[i].usb_flash.write_speed);
+            printf("%d\t", inf[i].ammo.cost);
+            printf("%d\t", inf[i].ammo.quantity);
             break;
     }   
     printf("\n");
@@ -275,27 +313,27 @@ void output_inf(Storage* inf, int i) {
 //-----------------EDIT--------------
 
 void edit_inf(Storage* array, int size) {
-    int choice;
+   // int choice;
     int i;
     if (is_empty(size))
         return;
     
     printf("Choose index of array to edit\n");
     rewind(stdin);
-    while (!scanf("%d", &i) || i < 0 || i >= size) {
+    while (!scanf_s("%d", &i) || i < 0 || i >= size) {
         printf("Wrong choice\n");
         printf("Try again - ");
         rewind(stdin);
     }
     while (1) {
-        choice = choose_field_to_edit(&array[i]);
+        int choice = choose_field_to_edit(&array[i]);
         system("cls");
         switch (choice) {
             case 1 : case 2 : case 3 : case 4 :
                 input_func_array[choice - 1](&array[i]); 
                 break;
             case 5 : case 6 : case 7 : case 8 :
-                media_specification_edit(&array[i], choice);
+                storage_type_edit(&array[i], choice);
                 break;
             case -1 :
                 return;
@@ -310,57 +348,56 @@ int choose_field_to_edit(Storage* inf) {
     int choice;
     while (1) {
         system("cls");
-        printf("1 - name\n");
-        printf("2 - author\n");
-        printf("3 - media type\n");
-        printf("4 - capacity\n");
+        printf("1 - obj type\n");
+        printf("2 - company name\n");
         switch (inf->type) {
-            case HDD :
-                printf("5 - hdd interface\n");
-                printf("6 - hdd average seek time(ms)\n");
-                printf("7 - hdd spindle speed(rpm)\n");
+            case Vehicle :
+                printf("3 - vehicle model\n");
+                printf("4 - vehicle cost\n");
+                printf("5 - vehicle max speed\n");
+                printf("6 - vehicle quantity");
                 break;
-            case SSD :
-                printf("5 - ssd interface\n");
-                printf("6 - input output speed(Mb/s)\n");
+            case Vegetable :
+                printf("3 - vegetable type\n");
+                printf("4 - vegetable quantity\n");
+                printf("5 - vegetable cost\n");
                 break;
-            case DISK :
-                printf("5 - disk type\n");
-                printf("6 - disk record type\n");
-                printf("7 - disk data rate(Mb/s)\n");
-                printf("8 - disk access time(ms)\n");           
+            case Fruit :
+                printf("3 - fruit type\n");
+                printf("4 - fruit quantity\n");
+                printf("5 - fruit cost\n");      
                 break;
-            case USB_FLASH :
-                printf("5 - usb standart\n");
-                printf("6 - usb read speed(Mb/s)\n");
-                printf("7 - usb write speed(Mb/s)\n");
+            case Ammo :
+                printf("3 - ammo type\n");
+                printf("4 - ammo quantity\n");
+                printf("5 - ammo cost\n");
                 break;
         }
         printf("-1 - quit\n");
         printf("choice - ");
         rewind(stdin);
-        if (scanf("%d", &choice) && ((choice >= 1 && choice <= 6) 
-        || (inf->type == HDD && choice == 7)
-        || (inf->type == DISK && (choice == 7 || choice == 8))
-        || (inf->type == USB_FLASH && choice == 7)
+        if (scanf_s("%d", &choice) && ((choice >= 1 && choice <= 6) 
+        || (inf->type == Vehicle && choice == 7)
+        || (inf->type == Fruit && (choice == 7 || choice == 8))
+        || (inf->type == Ammo && choice == 7)
         || choice == -1))
             break;
     }
    return choice;
 }
 
-void media_specification_edit(Storage* inf, int choice) {
+void storage_type_edit(Storage* inf, int choice) {
     switch (inf->type) {
-        case HDD :
+        case Vehicle :
             input_func_array[choice - 1](inf);
             break;
-        case SSD :
+        case Vegetable :
             input_func_array[choice + 2](inf);
             break;
-        case DISK :
+        case Fruit :
             input_func_array[choice + 4](inf);
             break;
-        case USB_FLASH :
+        case Ammo :
             input_func_array[choice + 8](inf);
             break;
     }
@@ -370,15 +407,13 @@ void media_specification_edit(Storage* inf, int choice) {
 
 void find_inf(Storage* array, int size) {
     int fl = 0;
-    int choice;
-    int type_media;
-    Storage find;
+    Storage find{};
     if (is_empty(size))
         return;
     
-    choice = choose_find_inf(array);
-    type_media = fl_type_media(choice);
-    if (!type_media)
+    int choice = choose_find_inf(array);
+    int type_storage = fl_type_storage(choice);
+    if (!type_storage)
         return;
 
     input_func_array[choice - 1](&find);
@@ -387,7 +422,7 @@ void find_inf(Storage* array, int size) {
         choice += 16;
     }
     for (int i = 0; i < size; ++i) {
-        if ((type_media == FL_NO_MATTER || array[i].type == type_media)
+        if ((type_storage == FL_NO_MATTER || array[i].type == type_storage)
         && cmp_array[choice - 1](array[i], find) == 0) {
             output_inf(array, i);
             fl = 1;
@@ -396,33 +431,31 @@ void find_inf(Storage* array, int size) {
     if (!fl)
         printf("No found\n");
     rewind(stdin);
-    getchar();
 }
 
 int choose_find_inf(Storage* array) {
     int choice;
     while (1) {
         system("cls");
-        printf("1 - name\n");
-        printf("2 - author\n");
-        printf("3 - media type\n");
-        printf("4 - capacity\n");
-        printf("5 - hdd interface\n");
-        printf("6 - hdd average seek time(ms)\n");
-        printf("7 - hdd spindle speed(rpm)\n");
-        printf("8 - ssd interface\n");
-        printf("9 - input output speed(Mb/s)\n");
-        printf("10 - disk type\n");
-        printf("11 - disk record type\n");
-        printf("12 - disk data rate(Mb/s)\n");
-        printf("13 - disk access time(ms)\n");           
-        printf("14 - usb standart\n");
-        printf("15 - usb read speed(Mb/s)\n");
-        printf("16 - usb write speed(Mb/s)\n");
+        printf("1 - company\n");
+        printf("2 - storage type\n");
+        printf("3 - vehicle model\n");
+        printf("4 - vehicle cost\n");
+        printf("5 - vehicle max speed\n");
+        printf("6 - vehicle quantity\n");
+        printf("7 - vegetable type\n");
+        printf("8 - vegetable quantity\n");
+        printf("9 - vegetable cost\n");
+        printf("10 - fruit type\n");
+        printf("11 - fruit quantity\n");
+        printf("13 - fruit cost\n");           
+        printf("14 - ammo type\n");
+        printf("15 - ammo quantity\n");
+        printf("16 - ammo cost\n");
         printf("-1 - quit\n");
         printf("choice - ");
         rewind(stdin);
-        if (scanf("%d", &choice) && (choice >= 1 && choice <= 16 || choice == -1))
+        if (scanf_s("%d", &choice) && (choice >= 1 && choice <= 16 || choice == -1))
             break;
     }
    return choice;
@@ -431,23 +464,20 @@ int choose_find_inf(Storage* array) {
 //------------------SORT---------------------
 
 void sort_array(Storage* array, int size) {
-    int choice;
-    int type_media;
-    int fl;
-    int swap_index;
+	int swap_index;
     int swap_fl = 0;
     if (is_empty(size))
         return;
     
-    choice = choose_find_inf(array);
-    type_media = fl_type_media(choice);
-    if (!type_media)
+    int choice = choose_find_inf(array);
+    int type_storage = fl_type_storage(choice);
+    if (!type_storage)
         return;
 
     for (int i = 0; i < size - 1; ++i) {
-        fl = 0;
+        int fl = 0;
         for (int j = 0; j < size - i; ++j) {
-            if ((type_media == FL_NO_MATTER || array[j].type == type_media)) {
+            if ((type_storage == FL_NO_MATTER || array[j].type == type_storage)) {
                 if (!fl) {
                     fl = 1;
                     swap_index = j;
@@ -467,7 +497,6 @@ void sort_array(Storage* array, int size) {
     else 
         printf("Sort is completed\n");
     rewind(stdin);
-    getchar();
 }
 
 void swap(Storage* array, int a, int b) {
@@ -479,15 +508,13 @@ void swap(Storage* array, int a, int b) {
 //------------DELETION------------------
 
 void delete_array(Storage* array, int* size) {
-    int choice;
-    int fl = 0;
-    int type_media;
-    Storage find;
+	int fl = 0;
+    Storage find{};
     if (is_empty(*size))
         return;
     
-    choice = choose_find_inf(array);
-    type_media = fl_type_media(choice);
+    int choice = choose_find_inf(array);
+    int type_media = fl_type_storage(choice);
     if (!type_media)
         return;
 
@@ -505,7 +532,6 @@ void delete_array(Storage* array, int* size) {
     else 
         printf("No found\n");
     rewind(stdin);
-    getchar();
 }
 
 void delete_inf(Storage* array, int i, int* size) {
@@ -514,8 +540,37 @@ void delete_inf(Storage* array, int i, int* size) {
     (*size)--;
     if (*size == 0)
         return;
-    if (!(array = (Storage*)realloc(array, *size * sizeof(Storage)))) {
+    if (!(array = static_cast<Storage*>(realloc(array, *size * sizeof(Storage))))) {
         printf("memory reallocation error");
         exit(0);
     }
 }
+//----------------------------------------------------------------------------- notfull search--------------------------------------------
+ int (*not_full_cmp_array[])(Storage a, Storage b) = {
+     not_full_company_cmp
+ };
+
+ void not_full_search(Storage* array, int size) {
+     int choice;
+     Storage find;
+     system("CLS");
+         printf("1 - company\n");
+         printf("-1 - exit\n");
+         printf("choice - ");
+         rewind(stdin);
+         while (!scanf_s("%d", &choice) || ((choice < 0 || choice > 1) && choice != -1)) {
+             printf("Wrong choice \n");
+             rewind(stdin);
+         }
+     if (choice == -1)
+         return;
+     input_func_array[choice - 1](&find);
+     for (int i = 0; i < size; ++i) {
+         if (not_full_cmp_array[choice - 1](array[i], find) != NULL) {
+             printf("%d. ", i);
+             output_inf(&array[i],choice);
+         }
+     }
+     rewind(stdin);
+     _getch();
+ }

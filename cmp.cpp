@@ -1,5 +1,9 @@
 #include"cmp.h"
-
+#include "Storage.h"
+int not_full_company_cmp(Storage a, Storage b)
+{
+	return (strstr(a.company, b.company) == NULL) ? -1 : 0;
+}
 
 int obj_type_cmp(Storage a, Storage b)
 {

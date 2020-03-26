@@ -1,7 +1,8 @@
 #pragma once
 #include<conio.h>
 #include<stdio.h>
-
+#define MAX_STR_SIZE 32
+#define FL_NO_MATTER 10
 enum Object
 {
 	Vehicle=1, Vegetable, Fruit, Ammo
@@ -29,6 +30,7 @@ enum Vehicle_e
 
 struct Storage
 {
+	char* company;
 	Object type;
 	union
 	{

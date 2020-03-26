@@ -1,7 +1,7 @@
 #pragma once
-#include <cstdio>
-
 #include "Storage.h"
+
+void input_company(Storage* a);
 
 void input_type(Storage* a);
 
@@ -31,8 +31,3 @@ void input_ammo_cost(Storage* a);
 
 void input_ammo_quantity(Storage* a);
 
-void (*input_func_array[])(Storage*) = {
-    input_ammo_cost,input_ammo_quantity,input_Ammo_type,input_fruit_cost,input_fruit_quantity,
-    input_Fruit_type, input_type,input_vegetable_cost,input_vegetable_quantity,
-    input_Vegetable_type,input_vehicle_cost,input_vehicle_max_speed,input_Vehicle_model,input_vehicle_quantity
-};

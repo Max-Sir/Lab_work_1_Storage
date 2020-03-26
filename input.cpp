@@ -2,8 +2,21 @@
 #include <cstdio>
 #include <conio.h>
 #include <cstdlib>
+#include <iostream>
+#include <windows.h>
+#include "Storage.h"
 
-//#include "Storage.h"
+void input_company(Storage* a)
+{
+	printf("Write Company name - ");
+	if (!(a->company = (char*)malloc(MAX_STR_SIZE)))
+	{
+		printf("Memory allocation error\n");
+		exit(0);
+	}
+	rewind(stdin);
+	std::cin >> a->company;
+}
 
 void input_type(Storage* a)
 {
@@ -143,3 +156,4 @@ void input_ammo_quantity(Storage* a)
 	printf("Write ammo quantity- ");
 	scanf_s("%d", &a->ammo.quantity);
 }
+
